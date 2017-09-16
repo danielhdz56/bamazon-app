@@ -16,10 +16,21 @@ const queryAll = () => {
         connection.query('SELECT id, product_name, price, stock_quantity FROM products', (err, rows) => {
             if (err) throw err; 
             allRows = rows;
-            res(console.log(allRows));
+            res(allRows);
         });
     });
 }
+
+const queryUpdateRow = (id, quantity) => {
+    return new Promise((res, rej) => {
+        connection.query('UPDATE products SET stock_quantity = ? WHERE id = ?', [specificRow.stock_quantity - quantity, id], (err, row) => {
+            if (err) throw err;
+            res(specificRow.price * quantity);
+        })
+    });
+    
+}
+
 
 const isInteger = (str) => {
     str = Number(str); // Number over parseInt to reject decimals
@@ -31,6 +42,11 @@ const searchArray = (arr, property, value) => {
         if (element[property] === value) specificRow = arr[index];
         return specificRow;
     }, this);
+}
+
+const checkQuantity = (obj, property, value) => {
+    if(obj[property] >= value) return value;
+    return false;
 }
 
 const questions = [{
@@ -51,6 +67,8 @@ const questions = [{
     validate: (value)=> {
         const pass = isInteger(value);
         if (!pass) return 'Please enter a valid amount of units';
+        const quantity = checkQuantity(specificRow, 'stock_quantity', +value);
+        if (!quantity) return 'Insufficient quantity';
         return true;
     }
 }];
@@ -58,11 +76,14 @@ const questions = [{
 connection.connect((err)=> {
     if (err) throw err;
     console.log('You are now connected...');
-    queryAll().then(()=> {
+    queryAll().then((rows) => {
+        console.log(rows);
         console.log('\n');
         inquirer.prompt(questions).then((answers) => {
-            console.log(answers);
-            console.log(specificRow);
+            queryUpdateRow(+answers.idOfProduct, +answers.qtyOfProduct).then((total)=> {
+                console.log(`Your total is ${total}`);
+                connection.end();
+            });
         });
     });
 });
