@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/danielhdz56/bamazon-app/issues"
   },
-  "homepage": "https://github.com/danielhdz56/bamazon-app#readme"
+  "homepage": "https://github.com/danielhdz56/bamazon-app#readme",
+  "dependencies": {
+    "mysql": "^2.14.1"
+  }
 }
