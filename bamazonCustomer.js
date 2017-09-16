@@ -34,7 +34,7 @@ const queryUpdateRow = (id, quantity) => {
 
 const isInteger = (str) => {
     str = Number(str); // Number over parseInt to reject decimals
-    return str % 1 === 0; 
+    return (str % 1 === 0 && str > 0); 
 }
 
 const searchArray = (arr, property, value) => {
@@ -57,7 +57,8 @@ const questions = [{
         const pass = isInteger(value); // turns string to number
         if (!pass) return 'Please enter a valid ID';
         searchArray(allRows, 'id', +value);
-        if (!specificRow) return 'Try again, ID is not in the database.'
+        if (specificRow.stock_quantity === 0) return `Sorry, we don\'t have ${specificRow.product_name} in stock`;
+        if (!specificRow) return 'Try again, ID is not in the database.';
         return true;
     }
 }, {
