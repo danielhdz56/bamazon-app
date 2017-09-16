@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/danielhdz56/bamazon-app#readme",
   "dependencies": {
+    "inquirer": "^3.2.3",
     "mysql": "^2.14.1"
   }
 }
