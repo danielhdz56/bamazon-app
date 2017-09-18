@@ -13,7 +13,7 @@ var specificRow;
 
 const queryAll = () => {
     return new Promise((res, rej) => {
-        connection.query('SELECT id, product_name, price, stock_quantity FROM products', (err, rows) => {
+        connection.query('SELECT id, product_name, price, stock_quantity, product_sales FROM products', (err, rows) => {
             if (err) throw err; 
             res(allRows = rows); // resolves promise
         });
@@ -22,7 +22,11 @@ const queryAll = () => {
 
 const queryUpdateRow = (id, quantity) => {
     return new Promise((res, rej) => {
-        connection.query('UPDATE products SET stock_quantity = ? WHERE id = ?', [specificRow.stock_quantity - quantity, id], (err, row) => {
+        let updatedItem = {
+            stock_quantity: specificRow.stock_quantity - quantity,
+            product_sales: (quantity * specificRow.price) + specificRow.product_sales
+        };
+        connection.query('UPDATE products SET ? WHERE id = ?', [updatedItem, id], (err, row) => {
             if (err) throw err;
             res(specificRow.price * quantity);
         });
@@ -52,7 +56,7 @@ const questions = [{
     validate: (value)=> {
         const pass = isInteger(value); // turns string to number
         if (!pass) return 'Please enter a valid ID';
-        searchArray(allRows, 'id', +value);
+        searchArray(allRows, 'id', +value); // declares specificRow
         if (specificRow.stock_quantity === 0) return `Sorry, we don\'t have ${specificRow.product_name} in stock`;
         if (!specificRow) return 'Try again, ID is not in the database.';
         return true;
@@ -78,7 +82,7 @@ connection.connect((err)=> {
         console.log('\n');
         inquirer.prompt(questions).then((answers) => {
             queryUpdateRow(+answers.idOfProduct, +answers.qtyOfProduct).then((total)=> {
-                console.log(`Your total is ${total}`);
+                console.log(`Your total is $${Math.round((total + 0.00001) * 100)/100}`); // rounds to two decimal places
                 connection.end();
             });
         }); // end of inquirer
