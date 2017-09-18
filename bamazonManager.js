@@ -9,6 +9,7 @@ const connection = mysql.createConnection({
 });
 var allRows = [];
 var allItems = [];
+var allDepartments = [];
 var specificRow;
 
 const isInteger = (str) => {
@@ -24,6 +25,10 @@ const isValidString = (str) => {
 const isValidPrice = (str) => {
     const regex = /^\d+(\.\d{0,2})?$/; // greater than 0 and up to two decimal places
     return (regex.test(str) && Number(str) > 0);
+}
+
+const onlyUnique = (value, index, self) => {
+    return self.indexOf(value) === index;
 }
 
 const questions = [{
@@ -78,20 +83,17 @@ const questions = [{
     validate: (value) => {
         const pass = isValidPrice(value);
         if (!pass) return 'Please enter a valid price';
+        console.log(allDepartments)
         return true;
     } // end of validation
 }, {
     name: "departmentToAdd",
-    type: "input",
+    type: "list",
     message: "What department store is this for?",
+    choices: allDepartments,
     when: (answers) => {
         return answers.mainMenu === 'Add New Product';
-    },
-    validate: (value) => {
-        const pass = isValidString(value);
-        if (!pass) return "Please make sure it's short, and that it doesn't contain any special characters";
-        return true;
-    } // end of validation
+    }
 }]; // end of questions
 
 const searchArray = (arr, property, value) => {
@@ -102,7 +104,7 @@ const searchArray = (arr, property, value) => {
 
 const queryAll = () => {
     return new Promise((res, rej) => {
-        connection.query('SELECT id, product_name, price, stock_quantity FROM products', (err, rows) => {
+        connection.query('SELECT * FROM products', (err, rows) => {
             if (err) throw err;
             res(rows); // resolves promise
         });
@@ -155,6 +157,9 @@ connection.connect((err) => {
         rows.forEach(function (element) {
             allRows.push(element);
             allItems.push(element.product_name);
+            if (allDepartments.indexOf(element.department_name) === -1){
+                allDepartments.push(element.department_name);
+            }
         }, this);
     });
     inquirer.prompt(questions).then((answers) => {
