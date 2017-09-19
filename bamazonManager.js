@@ -83,7 +83,6 @@ const questions = [{
     validate: (value) => {
         const pass = isValidPrice(value);
         if (!pass) return 'Please enter a valid price';
-        console.log(allDepartments)
         return true;
     } // end of validation
 }, {
@@ -148,7 +147,7 @@ const queryAddToProducts = (item, quantity, price, store) => {
             res(newItem);
         });
     });
-}
+};
 
 connection.connect((err) => {
     if (err) throw err;
