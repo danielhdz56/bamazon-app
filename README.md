@@ -28,13 +28,17 @@ Order as a customer.
 ### bamazonManager.js
 As a manager you can 
 1. View Products for Sale
+
 ![vps](/images/vps.gif?raw=true "vps")
 
 2. View Low Inventory
+
 ![vli](/images/vli.gif?raw=true "vli")
 
 3. Add to Inventory
+
 ![ai](/images/ai.gif?raw=true "ai")
 
-4. Add New Product
+4. Add New Products
+
 ![anp](/images/anp.gif?raw=true "anp")
