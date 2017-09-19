@@ -23,6 +23,7 @@ npm i
 ## How to Use
 ### bamazonCustomer.js  
 Order as a customer.
+
 ![customer](/images/customer.gif?raw=true "Customer")
 
 ### bamazonManager.js
